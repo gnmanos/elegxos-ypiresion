@@ -3,6 +3,7 @@ import sqlite3
 import os
 
 app = Flask(__name__)
+
 app.secret_key = "elegxos_ypiresion_secret"
 
 DATABASE = "elegxos_ypiresion.db"
@@ -11,6 +12,10 @@ DATABASE = "elegxos_ypiresion.db"
 def db():
     return sqlite3.connect(DATABASE)
 
+
+# =========================
+# ΔΗΜΙΟΥΡΓΙΑ ΒΑΣΗΣ
+# =========================
 
 def init_db():
 
@@ -40,7 +45,6 @@ def init_db():
         dria TEXT,
         omada TEXT,
         paratiriseis TEXT
-
     )
     """)
 
@@ -49,6 +53,7 @@ def init_db():
     CREATE TABLE IF NOT EXISTS users (
 
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+
         username TEXT,
         password TEXT,
         role TEXT
@@ -72,7 +77,6 @@ def init_db():
 
         VALUES
         ('admin','1234','ADMIN')
-
         """)
 
 
@@ -81,12 +85,12 @@ def init_db():
 
 
 
-# =====================
-# ΣΕΛΙΔΑ ΧΡΗΣΤΗ
-# =====================
+# =========================
+# ΣΕΛΙΔΑ ΕΓΓΡΑΦΗΣ
+# =========================
 
 
-user_page = """
+register_page = """
 
 <h2>ΕΛΕΓΧΟΣ ΥΠΗΡΕΣΙΩΝ</h2>
 
@@ -143,19 +147,16 @@ Email<br>
 def register():
 
 
-    if request.method=="POST":
+    if request.method == "POST":
 
 
-        conn=db()
-        cur=conn.cursor()
+        conn = db()
+        cur = conn.cursor()
 
 
         cur.execute("""
-
         INSERT INTO prosopiko
-
         (
-
         vathmos,
         onomateponymo,
         asm,
@@ -164,9 +165,7 @@ def register():
         email,
         typos_oximatos,
         arithmos_kykloforias
-
         )
-
 
         VALUES (?,?,?,?,?,?,?,?)
 
@@ -190,13 +189,21 @@ def register():
         conn.close()
 
 
-        return "Η εγγραφή ολοκληρώθηκε"
+        return """
+
+        <h2>Η εγγραφή ολοκληρώθηκε</h2>
+
+        <a href="/">
+        Νέα εγγραφή
+        </a>
+
+        """
 
 
-    return render_template_string(user_page)
-# =====================
-# ADMIN
-# =====================
+    return render_template_string(register_page)
+# =========================
+# ADMIN LOGIN
+# =========================
 
 
 login_page = """
@@ -228,6 +235,7 @@ Password<br>
 """
 
 
+
 admin_page = """
 
 <h2>ΠΙΝΑΚΑΣ ADMIN</h2>
@@ -252,7 +260,9 @@ admin_page = """
 list_page = """
 
 <h2>ΠΡΟΣΩΠΙΚΟ</h2>
-<form method="get" action="/prosopiko">
+
+
+<form method="get">
 
 Αναζήτηση:
 <input name="search" value="{{search}}">
@@ -263,8 +273,12 @@ list_page = """
 
 </form>
 
+
 <br>
+
+
 <table border="1" cellpadding="5">
+
 
 <tr>
 
@@ -279,6 +293,7 @@ list_page = """
 <th>ΕΠΕΞΕΡΓΑΣΙΑ</th>
 
 </tr>
+
 
 
 {% for p in data %}
@@ -301,17 +316,14 @@ list_page = """
 ΤΡΟΠΟΠΟΙΗΣΗ
 </a>
 
-<br>
-
-<a href="/delete/{{p[0]}}">
-ΔΙΑΓΡΑΦΗ
-</a>
-
 </td>
+
 
 </tr>
 
+
 {% endfor %}
+
 
 </table>
 
@@ -328,70 +340,42 @@ list_page = """
 
 edit_page = """
 
-<h2>ΤΡΟΠΟΠΟΙΗΣΗ ΠΡΟΣΩΠΙΚΟΥ</h2>
+<h2>ΤΡΟΠΟΠΟΙΗΣΗ ΣΤΟΙΧΕΙΩΝ</h2>
 
 
 <form method="post">
 
 
-Βαθμός<br>
-<input value="{{p[1]}}" disabled><br><br>
-
-
-Ονοματεπώνυμο<br>
-<input value="{{p[2]}}" disabled><br><br>
-
-
-ΑΣΜ<br>
-<input value="{{p[3]}}" disabled><br><br>
-
-
-Τηλέφωνο<br>
-<input value="{{p[4]}}" disabled><br><br>
-
-
-Email<br>
-<input value="{{p[5]}}" disabled><br><br>
-
-
-Τύπος Οχήματος<br>
-<input name="typos_oximatos" value="{{p[6] or ''}}"><br><br>
-
-
-Αριθμός Κυκλοφορίας<br>
-<input name="arithmos_kykloforias" value="{{p[7] or ''}}"><br><br>
-
-
 Κατηγορία Ι<br>
-<input name="katigoria" value="{{p[8] or ''}}"><br><br>
+<input name="katigoria" value="{{p[9] or ''}}"><br><br>
 
 
 ΔΝ<br>
-<input name="dn" value="{{p[9] or ''}}"><br><br>
+<input name="dn" value="{{p[10] or ''}}"><br><br>
 
 
 Αριθμός Όπλου<br>
-<input name="arithmos_oplou" value="{{p[10] or ''}}"><br><br>
+<input name="arithmos_oplou" value="{{p[11] or ''}}"><br><br>
 
 
 Θέση Οπλοβαστού<br>
-<input name="thesi_oplovastou" value="{{p[11] or ''}}"><br><br>
+<input name="thesi_oplovastou" value="{{p[12] or ''}}"><br><br>
 
 
 Παρών / Απών<br>
-<input name="paron_apon" value="{{p[12] or ''}}"><br><br>
+<input name="paron_apon" value="{{p[13] or ''}}"><br><br>
 
 
 ΔΡΙΑ<br>
-<input name="dria" value="{{p[13] or ''}}"><br><br>
+<input name="dria" value="{{p[14] or ''}}"><br><br>
 
 
 Ομάδα<br>
-<input name="omada" value="{{p[14] or ''}}"><br><br>
+<input name="omada" value="{{p[15] or ''}}"><br><br>
 
 
 Παρατηρήσεις<br>
-<input name="paratiriseis" value="{{p[15] or ''}}"><br><br>
+<input name="paratiriseis" value="{{p[16] or ''}}"><br><br>
 
 
 <button>
@@ -401,13 +385,6 @@ Email<br>
 
 </form>
 
-
-<br>
-
-<a href="/prosopiko">
-Πίσω
-</a>
-
 """
 
 
@@ -415,21 +392,20 @@ Email<br>
 @app.route("/admin", methods=["GET","POST"])
 def admin_login():
 
-
-    message=""
-
-
-    if request.method=="POST":
+    message = ""
 
 
-        conn=db()
-        cur=conn.cursor()
+    if request.method == "POST":
+
+
+        conn = db()
+        cur = conn.cursor()
 
 
         cur.execute("""
 
-        SELECT role FROM users
-
+        SELECT role
+        FROM users
         WHERE username=? AND password=?
 
         """,
@@ -442,20 +418,17 @@ def admin_login():
         ))
 
 
-        user=cur.fetchone()
-
+        user = cur.fetchone()
 
         conn.close()
 
 
 
-        if user:
-
+        if user and user[0]=="ADMIN":
 
             session["admin"]=True
 
             return redirect("/panel")
-
 
 
         message="Λάθος στοιχεία"
@@ -466,7 +439,6 @@ def admin_login():
         login_page,
         message=message
     )
-
 
 
 
@@ -483,24 +455,27 @@ def panel():
 
 
 
-
-
 @app.route("/prosopiko")
 def prosopiko():
 
+
     if not session.get("admin"):
+
         return redirect("/admin")
 
-    conn = db()
-    cur = conn.cursor()
 
     search = request.args.get("search","")
 
 
-if search:
+    conn = db()
+    cur = conn.cursor()
+
+
 
     cur.execute("""
+
     SELECT
+
     id,
     vathmos,
     onomateponymo,
@@ -512,54 +487,43 @@ if search:
 
     FROM prosopiko
 
+
     WHERE
+
     onomateponymo LIKE ?
     OR asm LIKE ?
-    OR tilefono LIKE ?
+
 
     ORDER BY id DESC
 
+
     """,
+
     (
-    "%"+search+"%",
-    "%"+search+"%",
-    "%"+search+"%"
+
+    "%" + search + "%",
+    "%" + search + "%"
+
     ))
 
 
-else:
 
-    cur.execute("""
-    SELECT
-    id,
-    vathmos,
-    onomateponymo,
-    asm,
-    tilefono,
-    email,
-    typos_oximatos,
-    arithmos_kykloforias
-
-    FROM prosopiko
-
-    ORDER BY id DESC
-
-    """)
-
-
-    data=cur.fetchall()
+    data = cur.fetchall()
 
 
     conn.close()
 
 
+
     return render_template_string(
+
         list_page,
+
         data=data,
+
         search=search
+
     )
-
-
 
 
 
@@ -567,8 +531,14 @@ else:
 def edit(id):
 
 
-    conn=db()
-    cur=conn.cursor()
+    if not session.get("admin"):
+
+        return redirect("/admin")
+
+
+
+    conn = db()
+    cur = conn.cursor()
 
 
 
@@ -577,18 +547,16 @@ def edit(id):
 
         cur.execute("""
 
-       UPDATE prosopiko SET
+        UPDATE prosopiko SET
 
-typos_oximatos=?,
-arithmos_kykloforias=?,
-katigoria=?,
-dn=?,
-arithmos_oplou=?,
-thesi_oplovastou=?,
-paron_apon=?,
-dria=?,
-omada=?,
-paratiriseis=?
+        katigoria=?,
+        dn=?,
+        arithmos_oplou=?,
+        thesi_oplovastou=?,
+        paron_apon=?,
+        dria=?,
+        omada=?,
+        paratiriseis=?
 
         WHERE id=?
 
@@ -596,23 +564,20 @@ paratiriseis=?
 
         (
 
-        request.form["typos_oximatos"],
-request.form["arithmos_kykloforias"],
-request.form["katigoria"],
-request.form["dn"],
-request.form["arithmos_oplou"],
-request.form["thesi_oplovastou"],
-request.form["paron_apon"],
-request.form["dria"],
-request.form["omada"],
-request.form["paratiriseis"],
-id
+        request.form["katigoria"],
+        request.form["dn"],
+        request.form["arithmos_oplou"],
+        request.form["thesi_oplovastou"],
+        request.form["paron_apon"],
+        request.form["dria"],
+        request.form["omada"],
+        request.form["paratiriseis"],
+        id
 
         ))
 
 
         conn.commit()
-
         conn.close()
 
 
@@ -631,37 +596,23 @@ id
     """,(id,))
 
 
-    p=cur.fetchone()
+    p = cur.fetchone()
 
 
     conn.close()
+
 
 
     return render_template_string(
+
         edit_page,
+
         p=p
+
     )
 
 
 
-@app.route("/delete/<int:id>")
-def delete(id):
-
-    if not session.get("admin"):
-        return redirect("/admin")
-
-    conn=db()
-    cur=conn.cursor()
-
-    cur.execute(
-        "DELETE FROM prosopiko WHERE id=?",
-        (id,)
-    )
-
-    conn.commit()
-    conn.close()
-
-    return redirect("/prosopiko")
 @app.route("/logout")
 def logout():
 
@@ -671,6 +622,10 @@ def logout():
 
 
 
+# =========================
+# ΕΚΚΙΝΗΣΗ
+# =========================
+
 
 if __name__=="__main__":
 
@@ -678,10 +633,13 @@ if __name__=="__main__":
     init_db()
 
 
-    port=int(os.environ.get("PORT",5000))
+    port = int(os.environ.get("PORT",5000))
 
 
     app.run(
+
         host="0.0.0.0",
+
         port=port
+
     )
