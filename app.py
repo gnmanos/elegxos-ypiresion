@@ -311,42 +311,70 @@ list_page = """
 
 edit_page = """
 
-<h2>ΤΡΟΠΟΠΟΙΗΣΗ</h2>
+<h2>ΤΡΟΠΟΠΟΙΗΣΗ ΠΡΟΣΩΠΙΚΟΥ</h2>
 
 
 <form method="post">
 
 
+Βαθμός<br>
+<input value="{{p[1]}}" disabled><br><br>
+
+
+Ονοματεπώνυμο<br>
+<input value="{{p[2]}}" disabled><br><br>
+
+
+ΑΣΜ<br>
+<input value="{{p[3]}}" disabled><br><br>
+
+
+Τηλέφωνο<br>
+<input value="{{p[4]}}" disabled><br><br>
+
+
+Email<br>
+<input value="{{p[5]}}" disabled><br><br>
+
+
+Τύπος Οχήματος<br>
+<input name="typos_oximatos" value="{{p[6] or ''}}"><br><br>
+
+
+Αριθμός Κυκλοφορίας<br>
+<input name="arithmos_kykloforias" value="{{p[7] or ''}}"><br><br>
+
+
 Κατηγορία Ι<br>
-<input name="katigoria" value="{{p[6] or ''}}"><br><br>
+<input name="katigoria" value="{{p[8] or ''}}"><br><br>
 
 
 ΔΝ<br>
-<input name="dn" value="{{p[7] or ''}}"><br><br>
+<input name="dn" value="{{p[9] or ''}}"><br><br>
 
 
 Αριθμός Όπλου<br>
-<input name="arithmos_oplou" value="{{p[8] or ''}}"><br><br>
+<input name="arithmos_oplou" value="{{p[10] or ''}}"><br><br>
 
 
 Θέση Οπλοβαστού<br>
-<input name="thesi_oplovastou" value="{{p[9] or ''}}"><br><br>
+<input name="thesi_oplovastou" value="{{p[11] or ''}}"><br><br>
 
 
-Παρών/Απών<br>
-<input name="paron_apon" value="{{p[10] or ''}}"><br><br>
+Παρών / Απών<br>
+<input name="paron_apon" value="{{p[12] or ''}}"><br><br>
 
 
 ΔΡΙΑ<br>
-<input name="dria" value="{{p[11] or ''}}"><br><br>
+<input name="dria" value="{{p[13] or ''}}"><br><br>
 
 
 Ομάδα<br>
-<input name="omada" value="{{p[12] or ''}}"><br><br>
+<input name="omada" value="{{p[14] or ''}}"><br><br>
 
 
 Παρατηρήσεις<br>
-<input name="paratiriseis" value="{{p[13] or ''}}"><br><br>
+<input name="paratiriseis" value="{{p[15] or ''}}"><br><br>
 
 
 <button>
@@ -355,6 +383,13 @@ edit_page = """
 
 
 </form>
+
+
+<br>
+
+<a href="/prosopiko">
+Πίσω
+</a>
 
 """
 
@@ -496,16 +531,18 @@ def edit(id):
 
         cur.execute("""
 
-        UPDATE prosopiko SET
+       UPDATE prosopiko SET
 
-        katigoria=?,
-        dn=?,
-        arithmos_oplou=?,
-        thesi_oplovastou=?,
-        paron_apon=?,
-        dria=?,
-        omada=?,
-        paratiriseis=?
+typos_oximatos=?,
+arithmos_kykloforias=?,
+katigoria=?,
+dn=?,
+arithmos_oplou=?,
+thesi_oplovastou=?,
+paron_apon=?,
+dria=?,
+omada=?,
+paratiriseis=?
 
         WHERE id=?
 
@@ -513,15 +550,17 @@ def edit(id):
 
         (
 
-        request.form["katigoria"],
-        request.form["dn"],
-        request.form["arithmos_oplou"],
-        request.form["thesi_oplovastou"],
-        request.form["paron_apon"],
-        request.form["dria"],
-        request.form["omada"],
-        request.form["paratiriseis"],
-        id
+        request.form["typos_oximatos"],
+request.form["arithmos_kykloforias"],
+request.form["katigoria"],
+request.form["dn"],
+request.form["arithmos_oplou"],
+request.form["thesi_oplovastou"],
+request.form["paron_apon"],
+request.form["dria"],
+request.form["omada"],
+request.form["paratiriseis"],
+id
 
         ))
 
