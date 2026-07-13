@@ -253,25 +253,24 @@ list_page = """
 
 <h2>ΠΡΟΣΩΠΙΚΟ</h2>
 
-
 <table border="1" cellpadding="5">
-
 
 <tr>
 
 <th>ID</th>
 <th>ΒΑΘΜΟΣ</th>
-<th>ΟΝΟΜΑ</th>
+<th>ΟΝΟΜΑΤΕΠΩΝΥΜΟ</th>
 <th>ΑΣΜ</th>
 <th>ΤΗΛ</th>
 <th>EMAIL</th>
+<th>ΟΧΗΜΑ</th>
+<th>ΑΡΙΘΜΟΣ</th>
 <th>ΕΠΕΞΕΡΓΑΣΙΑ</th>
 
 </tr>
 
 
 {% for p in data %}
-
 
 <tr>
 
@@ -281,6 +280,8 @@ list_page = """
 <td>{{p[3]}}</td>
 <td>{{p[4]}}</td>
 <td>{{p[5]}}</td>
+<td>{{p[6]}}</td>
+<td>{{p[7]}}</td>
 
 
 <td>
@@ -291,18 +292,16 @@ list_page = """
 
 </td>
 
-
 </tr>
-
 
 {% endfor %}
 
-
 </table>
+
 
 <br>
 
-<a href="/admin">
+<a href="/panel">
 Πίσω
 </a>
 
@@ -452,16 +451,18 @@ def prosopiko():
 
     SELECT
 
-    id,
-    vathmos,
-    onomateponymo,
-    asm,
-    tilefono,
-    email
+id,
+vathmos,
+onomateponymo,
+asm,
+tilefono,
+email,
+typos_oximatos,
+arithmos_kykloforias
 
-    FROM prosopiko
+FROM prosopiko
 
-    ORDER BY id DESC
+ORDER BY id DESC
 
     """)
 
