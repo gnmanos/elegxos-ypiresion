@@ -47,7 +47,7 @@ def register():
 
     if request.method == "POST":
 
-       conn = sqlite3.connect("/tmp/elegxos_ypiresion.db")
+        conn = sqlite3.connect("/tmp/elegxos_ypiresion.db")
         cur = conn.cursor()
 
         try:
