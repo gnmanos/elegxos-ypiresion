@@ -2,7 +2,37 @@ from flask import Flask, request, render_template_string
 import sqlite3
 
 app = Flask(__name__)
+def init_db():
+    conn = sqlite3.connect("elegxos_ypiresion.db")
+    cur = conn.cursor()
 
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS prosopiko (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        vathmos TEXT,
+        onomateponymo TEXT,
+        asm TEXT,
+        tilefono TEXT,
+        tilefono_syggeni TEXT,
+        email TEXT,
+        typos_oximatos TEXT,
+        arithmos_kykloforias TEXT,
+        katigoria TEXT,
+        dn TEXT,
+        arithmos_oplou TEXT,
+        thesi_oplovastou TEXT,
+        paron_apon TEXT,
+        dria TEXT,
+        omada TEXT,
+        paratiriseis TEXT
+    )
+    """)
+
+    conn.commit()
+    conn.close()
+
+
+init_db()
 form = """
 <h2>ΕΛΕΓΧΟΣ ΥΠΗΡΕΣΙΩΝ</h2>
 
