@@ -488,18 +488,13 @@ def panel():
 @app.route("/prosopiko")
 def prosopiko():
 
-
     if not session.get("admin"):
-
         return redirect("/admin")
 
+    conn = db()
+    cur = conn.cursor()
 
-
-    conn=db()
-    cur=conn.cursor()
-
-
-   search = request.args.get("search","")
+    search = request.args.get("search","")
 
 
 if search:
@@ -559,10 +554,10 @@ else:
 
 
     return render_template_string(
-    list_page,
-    data=data,
-    search=search
-)
+        list_page,
+        data=data,
+        search=search
+    )
 
 
 
