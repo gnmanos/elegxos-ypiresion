@@ -290,6 +290,12 @@ list_page = """
 ΤΡΟΠΟΠΟΙΗΣΗ
 </a>
 
+<br>
+
+<a href="/delete/{{p[0]}}">
+ΔΙΑΓΡΑΦΗ
+</a>
+
 </td>
 
 </tr>
@@ -598,7 +604,24 @@ id
 
 
 
+@app.route("/delete/<int:id>")
+def delete(id):
 
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    conn=db()
+    cur=conn.cursor()
+
+    cur.execute(
+        "DELETE FROM prosopiko WHERE id=?",
+        (id,)
+    )
+
+    conn.commit()
+    conn.close()
+
+    return redirect("/prosopiko")
 @app.route("/logout")
 def logout():
 
