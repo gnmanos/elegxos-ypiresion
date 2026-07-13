@@ -13,7 +13,6 @@ login_page = """
 <h2>ADMIN LOGIN</h2>
 
 <form method="post">
-
 Username:<br>
 <input name="username"><br><br>
 
@@ -21,7 +20,6 @@ Password:<br>
 <input type="password" name="password"><br><br>
 
 <button>ΕΙΣΟΔΟΣ</button>
-
 </form>
 
 <p>{{message}}</p>
@@ -33,6 +31,7 @@ menu_page = """
 
 <a href="/prosopiko">ΠΡΟΣΩΠΙΚΟ</a>
 <br><br>
+
 <a href="/logout">ΕΞΟΔΟΣ</a>
 """
 
@@ -44,16 +43,16 @@ list_page = """
 
 <tr>
 <th>ID</th>
-<th>Βαθμός</th>
-<th>Ονοματεπώνυμο</th>
+<th>ΒΑΘΜΟΣ</th>
+<th>ΟΝΟΜΑΤΕΠΩΝΥΜΟ</th>
 <th>ΑΣΜ</th>
-<th>Τηλέφωνο</th>
-<th>Επεξεργασία</th>
+<th>ΤΗΛΕΦΩΝΟ</th>
+<th>ΕΠΕΞΕΡΓΑΣΙΑ</th>
 </tr>
 
 {% for p in data %}
-
 <tr>
+
 <td>{{p[0]}}</td>
 <td>{{p[1]}}</td>
 <td>{{p[2]}}</td>
@@ -67,7 +66,6 @@ list_page = """
 </td>
 
 </tr>
-
 {% endfor %}
 
 </table>
@@ -79,36 +77,35 @@ list_page = """
 
 
 edit_page = """
-<h2>ΤΡΟΠΟΠΟΙΗΣΗ ADMIN</h2>
+<h2>ΣΤΟΙΧΕΙΑ ΠΡΟΣΩΠΙΚΟΥ</h2>
 
 <form method="post">
 
-Κατηγορία Ι:
+Κατηγορία Ι<br>
 <input name="katigoria" value="{{p[1] or ''}}"><br><br>
 
-ΔΝ:
+ΔΝ<br>
 <input name="dn" value="{{p[2] or ''}}"><br><br>
 
-Αριθμός Όπλου:
+Αριθμός Όπλου<br>
 <input name="arithmos_oplou" value="{{p[3] or ''}}"><br><br>
 
-Θέση στον Οπλοβαστό:
+Θέση στον Οπλοβαστό<br>
 <input name="thesi_oplovastou" value="{{p[4] or ''}}"><br><br>
 
-Παρών/Απών:
+Παρών / Απών<br>
 <input name="paron_apon" value="{{p[5] or ''}}"><br><br>
 
-ΔΡΙΑ:
+ΔΡΙΑ<br>
 <input name="dria" value="{{p[6] or ''}}"><br><br>
 
-Ομάδα:
+Ομάδα<br>
 <input name="omada" value="{{p[7] or ''}}"><br><br>
 
-Παρατηρήσεις:
+Παρατηρήσεις<br>
 <input name="paratiriseis" value="{{p[8] or ''}}"><br><br>
 
-
-<button>
+<button type="submit">
 ΑΠΟΘΗΚΕΥΣΗ
 </button>
 
@@ -120,36 +117,41 @@ edit_page = """
 """
 
 
-@app.route("/", methods=["GET","POST"])
+@app.route("/", methods=["GET", "POST"])
 def login():
 
-    message=""
+    message = ""
 
-    if request.method=="POST":
+    if request.method == "POST":
 
-        conn=db()
-        cur=conn.cursor()
+        conn = db()
+        cur = conn.cursor()
 
-        cur.execute("""
-        SELECT role
-        FROM users
-        WHERE username=? AND password=?
-        """,
-        (
-        request.form["username"],
-        request.form["password"]
-        ))
+        try:
 
-        user=cur.fetchone()
+            cur.execute(
+                "SELECT role FROM users WHERE username=? AND password=?",
+                (
+                    request.form["username"],
+                    request.form["password"]
+                )
+            )
 
-        conn.close()
+            user = cur.fetchone()
 
-        if user and user[0]=="ADMIN":
-            session["admin"]=True
-            return redirect("/admin")
+            if user and user[0] == "ADMIN":
+                session["admin"] = True
+                return redirect("/admin")
 
-        message="Λάθος στοιχεία"
+            message = "Λάθος στοιχεία"
 
+        except Exception as e:
+
+            message = str(e)
+
+        finally:
+
+            conn.close()
 
     return render_template_string(
         login_page,
@@ -166,23 +168,27 @@ def admin():
     return render_template_string(menu_page)
 
 
-
 @app.route("/prosopiko")
 def prosopiko():
 
     if not session.get("admin"):
         return redirect("/")
 
-
-    conn=db()
-    cur=conn.cursor()
+    conn = db()
+    cur = conn.cursor()
 
     cur.execute("""
-    SELECT id,vathmos,onomateponymo,asm,tilefono
+    SELECT
+    id,
+    vathmos,
+    onomateponymo,
+    asm,
+    tilefono
     FROM prosopiko
+    ORDER BY id DESC
     """)
 
-    data=cur.fetchall()
+    data = cur.fetchall()
 
     conn.close()
 
@@ -192,23 +198,20 @@ def prosopiko():
     )
 
 
-
-@app.route("/edit/<int:id>", methods=["GET","POST"])
+@app.route("/edit/<int:id>", methods=["GET", "POST"])
 def edit(id):
 
     if not session.get("admin"):
         return redirect("/")
 
+    conn = db()
+    cur = conn.cursor()
 
-    conn=db()
-    cur=conn.cursor()
-
-
-    if request.method=="POST":
+    if request.method == "POST":
 
         cur.execute("""
-        UPDATE prosopiko SET
-
+        UPDATE prosopiko
+        SET
         katigoria=?,
         dn=?,
         arithmos_oplou=?,
@@ -217,27 +220,24 @@ def edit(id):
         dria=?,
         omada=?,
         paratiriseis=?
-
         WHERE id=?
-
         """,
         (
-        request.form["katigoria"],
-        request.form["dn"],
-        request.form["arithmos_oplou"],
-        request.form["thesi_oplovastou"],
-        request.form["paron_apon"],
-        request.form["dria"],
-        request.form["omada"],
-        request.form["paratiriseis"],
-        id
+            request.form["katigoria"],
+            request.form["dn"],
+            request.form["arithmos_oplou"],
+            request.form["thesi_oplovastou"],
+            request.form["paron_apon"],
+            request.form["dria"],
+            request.form["omada"],
+            request.form["paratiriseis"],
+            id
         ))
 
         conn.commit()
         conn.close()
 
         return redirect("/prosopiko")
-
 
     cur.execute("""
     SELECT
@@ -250,15 +250,13 @@ def edit(id):
     dria,
     omada,
     paratiriseis
-
     FROM prosopiko
     WHERE id=?
-    """,(id,))
+    """, (id,))
 
-    p=cur.fetchone()
+    p = cur.fetchone()
 
     conn.close()
-
 
     return render_template_string(
         edit_page,
@@ -266,19 +264,14 @@ def edit(id):
     )
 
 
-
 @app.route("/logout")
 def logout():
 
     session.clear()
-
     return redirect("/")
 
 
-
-if __name__=="__main__":
-
-    print("ADMIN SERVER ΕΝΕΡΓΟΣ")
+if __name__ == "__main__":
 
     app.run(
         host="0.0.0.0",
