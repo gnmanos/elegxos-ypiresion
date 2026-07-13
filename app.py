@@ -252,7 +252,18 @@ admin_page = """
 list_page = """
 
 <h2>ΠΡΟΣΩΠΙΚΟ</h2>
+<form method="get" action="/prosopiko">
 
+Αναζήτηση:
+<input name="search" value="{{search}}">
+
+<button>
+ΑΝΑΖΗΤΗΣΗ
+</button>
+
+</form>
+
+<br>
 <table border="1" cellpadding="5">
 
 <tr>
@@ -488,22 +499,55 @@ def prosopiko():
     cur=conn.cursor()
 
 
+   search = request.args.get("search","")
+
+
+if search:
+
     cur.execute("""
-
     SELECT
+    id,
+    vathmos,
+    onomateponymo,
+    asm,
+    tilefono,
+    email,
+    typos_oximatos,
+    arithmos_kykloforias
 
-id,
-vathmos,
-onomateponymo,
-asm,
-tilefono,
-email,
-typos_oximatos,
-arithmos_kykloforias
+    FROM prosopiko
 
-FROM prosopiko
+    WHERE
+    onomateponymo LIKE ?
+    OR asm LIKE ?
+    OR tilefono LIKE ?
 
-ORDER BY id DESC
+    ORDER BY id DESC
+
+    """,
+    (
+    "%"+search+"%",
+    "%"+search+"%",
+    "%"+search+"%"
+    ))
+
+
+else:
+
+    cur.execute("""
+    SELECT
+    id,
+    vathmos,
+    onomateponymo,
+    asm,
+    tilefono,
+    email,
+    typos_oximatos,
+    arithmos_kykloforias
+
+    FROM prosopiko
+
+    ORDER BY id DESC
 
     """)
 
@@ -515,9 +559,10 @@ ORDER BY id DESC
 
 
     return render_template_string(
-        list_page,
-        data=data
-    )
+    list_page,
+    data=data,
+    search=search
+)
 
 
 
