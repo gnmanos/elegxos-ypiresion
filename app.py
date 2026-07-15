@@ -865,7 +865,75 @@ def delete(id):
     return redirect("/prosopiko")
 
 
+# =========================
+# ΗΜΕΡΗΣΙΕΣ ΥΠΗΡΕΣΙΕΣ
+# =========================
 
+
+ypiresies_page = """
+
+<h2>ΗΜΕΡΗΣΙΕΣ ΥΠΗΡΕΣΙΕΣ</h2>
+
+
+<form method="post">
+
+
+Επιλογή Ημερομηνίας
+
+<br>
+
+<input type="date" name="imerominia" required>
+
+
+<br><br>
+
+
+<button>
+
+ΣΥΝΕΧΕΙΑ
+
+</button>
+
+
+</form>
+
+
+<br>
+
+<a href="/panel">
+Πίσω
+</a>
+
+
+"""
+
+
+
+@app.route("/ypiresies", methods=["GET","POST"])
+def ypiresies():
+
+
+    if not session.get("admin"):
+
+        return redirect("/admin")
+
+
+
+    if request.method == "POST":
+
+
+        imerominia = request.form["imerominia"]
+
+
+        return redirect(
+            "/anathesi/" + imerominia
+        )
+
+
+
+    return render_template_string(
+        ypiresies_page
+    )
 
 
 @app.route("/logout")
