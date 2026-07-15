@@ -79,6 +79,9 @@ def init_db():
 
 
 
+# =========================
+# ΣΕΛΙΔΑ ΧΡΗΣΤΗ
+# =========================
 
 
 user_page = """
@@ -91,35 +94,35 @@ user_page = """
 <form method="post">
 
 
-Βαθμός<br>
-<input name="vathmos"><br><br>
+Βαθμός *<br>
+<input name="vathmos" required><br><br>
 
 
-Ονοματεπώνυμο<br>
-<input name="onomateponymo"><br><br>
+Ονοματεπώνυμο *<br>
+<input name="onomateponymo" required><br><br>
 
 
-ΑΣΜ<br>
-<input name="asm"><br><br>
+ΑΣΜ *<br>
+<input name="asm" required><br><br>
 
 
-Τηλέφωνο<br>
-<input name="tilefono"><br><br>
+Τηλέφωνο *<br>
+<input name="tilefono" required><br><br>
 
 
-Τηλέφωνο Συγγενή<br>
-<input name="tilefono_syggeni"><br><br>
+Τηλέφωνο Συγγενή *<br>
+<input name="tilefono_syggeni" required><br><br>
 
 
-Email<br>
-<input name="email"><br><br>
+Email *<br>
+<input type="email" name="email" required><br><br>
 
 
-Τύπος Οχήματος<br>
+Τύπος Οχήματος (Προαιρετικό)<br>
 <input name="typos_oximatos"><br><br>
 
 
-Αριθμός Κυκλοφορίας<br>
+Αριθμός Κυκλοφορίας (Προαιρετικό)<br>
 <input name="arithmos_kykloforias"><br><br>
 
 
@@ -134,12 +137,24 @@ Email<br>
 
 
 
-
-
 @app.route("/", methods=["GET","POST"])
 def register():
 
     if request.method == "POST":
+
+
+        if not request.form["vathmos"].strip() \
+        or not request.form["onomateponymo"].strip() \
+        or not request.form["asm"].strip() \
+        or not request.form["tilefono"].strip() \
+        or not request.form["tilefono_syggeni"].strip() \
+        or not request.form["email"].strip():
+
+            return """
+            <h2>Σφάλμα</h2>
+            <h3>Τα πεδία με * είναι υποχρεωτικά</h3>
+            <a href="/">Επιστροφή</a>
+            """
 
 
         conn = db()
@@ -147,6 +162,7 @@ def register():
 
 
         cur.execute("""
+
         INSERT INTO prosopiko
 
         (
@@ -183,12 +199,25 @@ def register():
 
 
         return """
+
         <h2>Η εγγραφή ολοκληρώθηκε</h2>
-        <a href="/">Νέα εγγραφή</a>
+
+        <a href="/">
+        Νέα εγγραφή
+        </a>
+
         """
 
 
     return render_template_string(user_page)
+
+
+
+# =========================
+# LOGIN ADMIN
+# =========================
+
+
 login_page = """
 
 <h2>ADMIN LOGIN</h2>
@@ -196,17 +225,22 @@ login_page = """
 
 <form method="post">
 
+
 Username<br>
 <input name="username"><br><br>
 
+
 Password<br>
 <input type="password" name="password"><br><br>
+
 
 <button>
 ΕΙΣΟΔΟΣ
 </button>
 
+
 </form>
+
 
 <p>{{message}}</p>
 
@@ -223,6 +257,7 @@ admin_page = """
 ΠΡΟΣΩΠΙΚΟ
 </a>
 
+
 <br><br>
 
 
@@ -232,10 +267,6 @@ admin_page = """
 
 
 """
-
-
-
-
 list_page = """
 
 <h2>ΠΡΟΣΩΠΙΚΟ ADMIN</h2>
@@ -253,6 +284,7 @@ list_page = """
 <th>ΤΗΛ</th>
 <th>EMAIL</th>
 <th>ΟΧΗΜΑ</th>
+<th>ΑΡΙΘΜΟΣ</th>
 <th>ΕΝΕΡΓΕΙΕΣ</th>
 
 </tr>
@@ -276,9 +308,10 @@ list_page = """
 
 <td>{{p[7]}}</td>
 
+<td>{{p[8]}}</td>
+
 
 <td>
-
 
 <a href="/edit/{{p[0]}}">
 ΤΡΟΠΟΠΟΙΗΣΗ
@@ -301,7 +334,6 @@ onclick="return confirm('Διαγραφή εγγραφής;')">
 
 </tr>
 
-
 {% endfor %}
 
 
@@ -318,6 +350,11 @@ onclick="return confirm('Διαγραφή εγγραφής;')">
 
 
 
+
+
+# =========================
+# ΠΛΗΡΗΣ ΕΠΕΞΕΡΓΑΣΙΑ ADMIN
+# =========================
 
 
 edit_page = """
@@ -377,7 +414,7 @@ Email<br>
 <input name="thesi_oplovastou" value="{{p[12] or ''}}"><br><br>
 
 
-Παρών/Απών<br>
+Παρών / Απών<br>
 <input name="paron_apon" value="{{p[13] or ''}}"><br><br>
 
 
@@ -403,6 +440,13 @@ Email<br>
 
 
 """
+
+
+# =========================
+# ADMIN LOGIN
+# =========================
+
+
 @app.route("/admin", methods=["GET","POST"])
 def admin_login():
 
@@ -413,7 +457,6 @@ def admin_login():
 
 
         conn = db()
-
         cur = conn.cursor()
 
 
@@ -430,7 +473,6 @@ def admin_login():
         (
 
         request.form["username"],
-
         request.form["password"]
 
         ))
@@ -464,8 +506,6 @@ def admin_login():
 
 
 
-
-
 @app.route("/panel")
 def panel():
 
@@ -489,9 +529,7 @@ def prosopiko():
 
 
     conn = db()
-
     cur = conn.cursor()
-
 
 
     cur.execute("""
@@ -505,12 +543,10 @@ def prosopiko():
     """)
 
 
-
     data = cur.fetchall()
 
 
     conn.close()
-
 
 
     return render_template_string(
@@ -520,29 +556,19 @@ def prosopiko():
         data=data
 
     )
-
-
-
-
-
 @app.route("/edit/<int:id>", methods=["GET","POST"])
 def edit(id):
-
 
     if not session.get("admin"):
 
         return redirect("/admin")
 
 
-
     conn = db()
-
     cur = conn.cursor()
 
 
-
     if request.method == "POST":
-
 
 
         cur.execute("""
@@ -551,36 +577,21 @@ def edit(id):
 
 
         vathmos=?,
-
         onomateponymo=?,
-
         asm=?,
-
         tilefono=?,
-
         tilefono_syggeni=?,
-
         email=?,
-
         typos_oximatos=?,
-
         arithmos_kykloforias=?,
 
-
         katigoria=?,
-
         dn=?,
-
         arithmos_oplou=?,
-
         thesi_oplovastou=?,
-
         paron_apon=?,
-
         dria=?,
-
         omada=?,
-
         paratiriseis=?
 
 
@@ -592,35 +603,21 @@ def edit(id):
         (
 
         request.form["vathmos"],
-
         request.form["onomateponymo"],
-
         request.form["asm"],
-
         request.form["tilefono"],
-
         request.form["tilefono_syggeni"],
-
         request.form["email"],
-
         request.form["typos_oximatos"],
-
         request.form["arithmos_kykloforias"],
 
         request.form["katigoria"],
-
         request.form["dn"],
-
         request.form["arithmos_oplou"],
-
         request.form["thesi_oplovastou"],
-
         request.form["paron_apon"],
-
         request.form["dria"],
-
         request.form["omada"],
-
         request.form["paratiriseis"],
 
         id
@@ -628,14 +625,11 @@ def edit(id):
         ))
 
 
-
         conn.commit()
-
         conn.close()
 
 
         return redirect("/prosopiko")
-
 
 
 
@@ -652,7 +646,6 @@ def edit(id):
 
 
     conn.close()
-
 
 
     return render_template_string(
@@ -676,11 +669,8 @@ def delete(id):
         return redirect("/admin")
 
 
-
     conn = db()
-
     cur = conn.cursor()
-
 
 
     cur.execute(
@@ -695,7 +685,6 @@ def delete(id):
     conn.commit()
 
     conn.close()
-
 
 
     return redirect("/prosopiko")
