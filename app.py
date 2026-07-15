@@ -18,6 +18,7 @@ def init_db():
     conn = db()
     cur = conn.cursor()
 
+
     cur.execute("""
     CREATE TABLE IF NOT EXISTS prosopiko (
 
@@ -46,6 +47,7 @@ def init_db():
     """)
 
 
+
     cur.execute("""
     CREATE TABLE IF NOT EXISTS users (
 
@@ -58,24 +60,108 @@ def init_db():
     """)
 
 
+
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS ypiresies (
+
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+        imerominia TEXT,
+
+        prosopiko_id INTEGER,
+
+        ypiresia TEXT,
+
+        katastasi TEXT DEFAULT 'ΕΝΕΡΓΗ',
+
+        FOREIGN KEY(prosopiko_id) REFERENCES prosopiko(id)
+
+    )
+    """)
+
+
+
     cur.execute("SELECT COUNT(*) FROM users")
+
 
     count = cur.fetchone()[0]
 
 
+
     if count == 0:
+
 
         cur.execute("""
         INSERT INTO users
         (username,password,role)
 
         VALUES
+
         ('admin','1234','ADMIN')
+
         """)
 
 
-    conn.commit()
+
+        conn.commit()
+
     conn.close()
+
+
+
+YPESIES = [
+
+"ΣΚΟΠΟΣ Κ.Π. 1",
+"ΣΚΟΠΟΣ Κ.Π. 2",
+"ΣΚΟΠΟΣ Κ.Π. 3",
+"ΣΚΟΠΟΣ Κ.Π. 4",
+
+"Β. ΣΚΟΠΟΣ Κ.Π. 1",
+"Β. ΣΚΟΠΟΣ Κ.Π. 2",
+"Β. ΣΚΟΠΟΣ Κ.Π. 3",
+"Β. ΣΚΟΠΟΣ Κ.Π. 4",
+
+"ΠΕΡΙΠΟΛΟ 1",
+"ΠΕΡΙΠΟΛΟ 2",
+"ΠΕΡΙΠΟΛΟ 3",
+"ΠΕΡΙΠΟΛΟ 4",
+
+"Β. ΠΕΡΙΠΟΛΟΥ 1",
+"Β. ΠΕΡΙΠΟΛΟΥ 2",
+"Β. ΠΕΡΙΠΟΛΟΥ 3",
+"Β. ΠΕΡΙΠΟΛΟΥ 4",
+
+"ΑΟΤ 1",
+"ΑΟΤ 2",
+"ΑΟΤ 3",
+"ΑΟΤ 4",
+
+"Β. ΑΟΤ 1",
+"Β. ΑΟΤ 2",
+"Β. ΑΟΤ 3",
+"Β. ΑΟΤ 4",
+
+"ΘΑΛΑΜΟΦΥΛΑΚΑΣ 1",
+"ΘΑΛΑΜΟΦΥΛΑΚΑΣ 2",
+"ΘΑΛΑΜΟΦΥΛΑΚΑΣ 3",
+
+"ΑΜ",
+
+"ΟΡΓΑΝΟ ΥΠΗΡΕΣΙΑΣ ΛΟΧΟΥ",
+
+"ΛΑΝΤΖΑ ΕΣΤΙΑΤΟΡΙΟΥ 1",
+"ΛΑΝΤΖΑ ΕΣΤΙΑΤΟΡΙΟΥ 2",
+"ΛΑΝΤΖΑ ΕΣΤΙΑΤΟΡΙΟΥ 3",
+"ΛΑΝΤΖΑ ΕΣΤΙΑΤΟΡΙΟΥ 4",
+"ΛΑΝΤΖΑ ΕΣΤΙΑΤΟΡΙΟΥ 5",
+"ΛΑΝΤΖΑ ΕΣΤΙΑΤΟΡΙΟΥ 6",
+
+"ΛΑΝΤΖΑ ΜΑΓΕΙΡΙΩΝ 1",
+"ΛΑΝΤΖΑ ΜΑΓΕΙΡΙΩΝ 2",
+"ΛΑΝΤΖΑ ΜΑΓΕΙΡΙΩΝ 3",
+"ΛΑΝΤΖΑ ΜΑΓΕΙΡΙΩΝ 4"
+
+]
 
 
 
@@ -255,6 +341,14 @@ admin_page = """
 
 <a href="/prosopiko">
 ΠΡΟΣΩΠΙΚΟ
+</a>
+
+
+<br><br>
+
+
+<a href="/ypiresies">
+ΗΜΕΡΗΣΙΕΣ ΥΠΗΡΕΣΙΕΣ
 </a>
 
 
