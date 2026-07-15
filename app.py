@@ -270,7 +270,23 @@ admin_page = """
 list_page = """
 
 <h2>ΠΡΟΣΩΠΙΚΟ ADMIN</h2>
+<form method="get" action="/prosopiko">
 
+Αναζήτηση Ονοματεπωνύμου:
+
+<input name="search" value="{{search}}">
+
+<button>
+ΑΝΑΖΗΤΗΣΗ
+</button>
+
+<a href="/prosopiko">
+ΚΑΘΑΡΙΣΜΟΣ
+</a>
+
+</form>
+
+<br>
 
 <table border="1" cellpadding="5">
 
@@ -543,8 +559,58 @@ def prosopiko():
         return redirect("/admin")
 
 
+    search = request.args.get("search","")
+
+
     conn = db()
     cur = conn.cursor()
+
+
+    if search:
+
+        cur.execute("""
+
+        SELECT *
+
+        FROM prosopiko
+
+        WHERE onomateponymo LIKE ?
+
+        ORDER BY id DESC
+
+        """,
+
+        ("%"+search+"%",)
+
+        )
+
+    else:
+
+        cur.execute("""
+
+        SELECT *
+
+        FROM prosopiko
+
+        ORDER BY id DESC
+
+        """)
+
+
+    data = cur.fetchall()
+
+
+    conn.close()
+
+
+    return render_template_string(
+
+        list_page,
+
+        data=data,
+        search=search
+
+    )
 
 
     cur.execute("""
