@@ -402,7 +402,7 @@ list_page = """
 <th>ΔΝ</th>
 <th>ΑΡΙΘΜΟΣ ΟΠΛΟΥ</th>
 <th>ΘΕΣΗ ΟΠΛΟΒΑΣΤΟΥ</th>
-<th>ΠΑΡΩΝ/ΑΠΩΝ</th>
+<th>ΠΑΡΟΝ/ΑΠΟΝ</th>
 <th>ΔΡΙΑ</th>
 <th>ΟΜΑΔΑ</th>
 <th>ΠΑΡΑΤΗΡΗΣΕΙΣ</th>
@@ -539,7 +539,7 @@ Email<br>
 <input name="thesi_oplovastou" value="{{p[12] or ''}}"><br><br>
 
 
-Παρών / Απών<br>
+Παρόν / Απόν<br>
 <input name="paron_apon" value="{{p[13] or ''}}"><br><br>
 
 
