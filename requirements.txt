@@ -3,3 +3,4 @@ qrcode
 pyside6
 openpyxl
 pandas
+psycopg2-binary
