@@ -463,74 +463,75 @@ def panel():
 @app.route("/prosopiko")
 def prosopiko():
 
+    try:
 
-    if not session.get("admin"):
+        if not session.get("admin"):
 
-        return redirect("/admin")
-
-
-
-    search=request.args.get("search","")
+            return redirect("/admin")
 
 
-
-    conn=db()
-
-    cur=conn.cursor()
+        search = request.args.get("search","")
 
 
+        conn = db()
 
-    if search:
+        cur = conn.cursor()
 
 
-        cur.execute("""
+        if search:
 
-        SELECT *
 
-        FROM prosopiko
+            cur.execute("""
 
-        WHERE onomateponymo ILIKE %s
+            SELECT *
 
-        ORDER BY id DESC
+            FROM prosopiko
 
-        """,
+            WHERE onomateponymo ILIKE %s
 
-        ("%"+search+"%",)
+            ORDER BY id DESC
+
+            """,
+
+            ("%"+search+"%",)
+
+            )
+
+
+        else:
+
+
+            cur.execute("""
+
+            SELECT *
+
+            FROM prosopiko
+
+            ORDER BY id DESC
+
+            """)
+
+
+        data = cur.fetchall()
+
+
+        conn.close()
+
+
+        return render_template_string(
+
+            list_page,
+
+            data=data,
+            search=search
 
         )
 
+    except Exception as e:
 
-    else:
+        print("PROSOPIKO ERROR:", e)
 
-
-        cur.execute("""
-
-        SELECT *
-
-        FROM prosopiko
-
-        ORDER BY id DESC
-
-        """)
-
-
-
-    data=cur.fetchall()
-
-
-
-    conn.close()
-
-
-
-    return render_template_string(
-
-        list_page,
-
-        data=data,
-        search=search
-
-    )
+        return str(e)
 @app.route("/edit/<int:id>", methods=["GET","POST"])
 def edit(id):
 
